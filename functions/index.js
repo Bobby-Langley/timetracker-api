@@ -9,7 +9,7 @@ app.use(cors())
 
 app.get('/activities', getActivities)
 app.post('/activities', postActivity)
-// app.delete('/activities/:activityId', deleteActivity )
+app.delete('/activities/:activityId', deleteActivity )
 app.patch('/activities/:activityId'), updateActivity
 
 

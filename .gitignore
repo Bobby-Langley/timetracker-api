@@ -1,5 +1,4 @@
-node_modules
-credentials.json
+
 # Logs
 logs
 *.log

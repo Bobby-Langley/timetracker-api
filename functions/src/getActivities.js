@@ -14,36 +14,25 @@ function authDB() {
 
 
 exports.getActivities = (req, res) => {
-    authDB()
-    db.collection('activities').get()
-      .then((collection) => {
-        const activitiesResults = collection.docs.map(doc => {
-          let activity = doc.data();
-          activity.id = doc.id;
-          return activity;
-        });
-        res.status(200).json({
-          status: "Activities successfully returned",
-          data: activitiesResults,
-          message: "Activities loaded",
-          statusCode: "200",
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.status(500).send({
-          status: "errrrrr",
-          data: err,
-          message: "shits broke, no activities for you",
-          statusCode: "500",
-        });
-      });
-  };
+  authDB()
+  db.collection('activities').get() //.where('userId','==', userId)
+    .then(collection => {
+        const activityResults = collection.docs.map(doc => {
+          let activity = doc.data()
+          activity.id = doc.id
+          return activity
+        })
+        res.status(200).json(activityResults)
+    })
+    .catch(e => {
+      res.status(500).send('Error retrieving activities: ' + e)
+    })
+}
 
 exports.postActivity = (req, res) => {
-  // if(!req.body || !req.body.name || !req.body.userId){
-  //   res.status(401).send('Insufficient data')
-  // }
+  if(!req.body || !req.body.name || !req.body.userId){
+    res.status(401).send('Insufficient data')
+  }
   authDB()
   let now = admin.firestore.FieldValue.serverTimestamp()
   let newActivity = {
@@ -67,7 +56,7 @@ db.collection('activities').add(newActivity)
 
 
 exports.updateActivity = (req, res) => {
-  if(!req.body || !req.body.duration || !req.params.acticityID)
+  if(!req.body || !req.body.duration || !req.params.activityID)
     res.status(400).send('Invalid request, must have body, duration, and activity Id')
   authDB()
   const now = admin.firestore.FieldValue.serverTimestamp()
@@ -89,5 +78,20 @@ exports.updateActivity = (req, res) => {
         });
       })
     
-  ;
 }
+
+exports.deleteActivity = (req, res) => {
+  if(!req.params.activityId)
+    res.status(400).send('Invalid request, must have activity Id')
+  authDB()
+  db.collection('activities').doc(req.params.activityId).delete()
+    .then(() => {
+      this.getActivities(req, res)
+    })
+    .catch((err) => {
+      console.log(err)
+      res.status(500).send('Delete failed', + err)
+    })
+}
+
+
