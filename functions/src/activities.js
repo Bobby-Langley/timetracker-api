@@ -29,9 +29,9 @@ exports.getActivities = (req, res) => {
 };
 
 exports.postActivity = (req, res) => {
-  if (!req.body || !req.body.name || !req.body.userId) {
-    res.status(401).send("Insufficient data");
-  }
+  // if (!req.body || !req.body.name || !req.body.userId) {
+  //   res.status(401).send("Insufficient data");
+  // }
   authDB();
   let now = admin.firestore.FieldValue.serverTimestamp();
   let newActivity = {
